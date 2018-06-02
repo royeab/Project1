@@ -15,32 +15,46 @@
 	getImgWidth equ 32
 	getImgHeight equ 36
 	marioGroundloc equ 250
+	marioBegin equ 200
+	backTwoBegin equ 0
+	backOneBegin equ -1280
 .DATA	
 	marioloc BYTE "mario.bmp",0
 	mario2loc BYTE "mario2.bmp",0
 	backloc BYTE "background.bmp",0
 	goombaloc BYTE "goomba.bmp",0
+	gameoverloc BYTE "gameover.bmp",0
+	winloc BYTE "youwin.bmp",0
 	isright dword 1
 	grv dword 0
 	goombaamunt dword 0
-
+	score dword 0
+	playing dword 1
 	KEYS STRUCT
-		Left qword ?
-		Right qword ?
-		Up qword ?
+		Left dword ?
+		Right dword ?
+		Up dword ?
 	KEYS ends
 	CHARACTER STRUCT
 		pos POINT<> ;x=0 y=4
 		dir POINT<> ;x=8 y=12
 		keys KEYS<> ;Left = 16 Right = 20 Up = 24			
 		Right Img<> ;28-48 width:32 height:36
-		Left Img<> ;48-68	
+		Left Img<> ;48-68
+		alive BYTE 1
 		UpRight Img<> ;68-88
 		UpLeft Img<> ;88-108
 	CHARACTER ends
-	goombas CHARACTER 100 dup(<>)
 	textBuffer byte 64 dup(0)
-	mario CHARACTER<<200,marioGroundloc>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
-	back1 CHARACTER<<-1280,0>,<1,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
-	back2 CHARACTER<<0,0>,<1,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
-	goomba CHARACTER<<500,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	mario CHARACTER<<marioBegin,marioGroundloc>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	back1 CHARACTER<<backOneBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	back2 CHARACTER<<backTwoBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	goomba1 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	goomba2 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	goomba3 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	goomba4 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	goomba5 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	goomba6 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	gameover CHARACTER<<400,150>>
+	win CHARACTER<<400,150>>
+	
