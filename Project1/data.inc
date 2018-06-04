@@ -30,6 +30,7 @@
 	goombaamunt dword 0
 	score dword 0
 	playing dword 1
+	jumpCounter dword 10
 	KEYS STRUCT
 		Left dword ?
 		Right dword ?
@@ -42,13 +43,15 @@
 		Right Img<> ;28-48 width:32 height:36
 		Left Img<> ;48-68
 		alive BYTE 1
+		XOne dword ? ;69
+		xTwo dword ? ;73
 		UpRight Img<> ;68-88
 		UpLeft Img<> ;88-108
 	CHARACTER ends
 	textBuffer byte 64 dup(0)
 	mario CHARACTER<<marioBegin,marioGroundloc>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
-	back1 CHARACTER<<backOneBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
-	back2 CHARACTER<<backTwoBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	back1 CHARACTER<<backTwoBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	back2 CHARACTER<<backOneBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	goomba1 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	goomba2 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	goomba3 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>

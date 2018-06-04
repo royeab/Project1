@@ -1,6 +1,12 @@
 .686
 .code
-moveobj PROC objAdr:DWORD
+moveobj PROC objAdr:DWORD, counterLoc:dword
+	mov eax,counterLoc
+	mov ebx,10
+	cmp [eax],ebx
+	jne notToday
+	mov ebx,0
+	mov [eax],ebx
 	mov ebx,objAdr ;ebx->offset mario
 	
 	mov ecx,marioGroundloc
@@ -18,6 +24,10 @@ moveobj PROC objAdr:DWORD
 	cmp eax,0
 	jg jumpyes
 	ret
+	notToday:
+	mov ebx,1
+	add [eax],ebx
+	ret
 moveobj ENDP
 getkeysmar PROC objAdr:DWORD
 	mov ebx,objAdr
@@ -32,8 +42,22 @@ getkeysmar PROC objAdr:DWORD
 	notup:
 	ret
 getkeysmar endp
+movebackTwo proc objAdr:dword
+	;drd_imageDrawCrop PROTO pimg:DWORD, dstX:DWORD, dstY:DWORD, srcX:DWORD, srcY:DWORD, srcWidth:DWORD, srcHeight:DWORD
+	mov objAdr,ebx
+	mov eax,[ebx+28]
+	mov edx,[ebx+73]
+	sub edx,[ebx+8]
+	mov ecx,[ebx+69]
+	add ecx,[ebx+8]
+	pusha
+	invoke drd_imageDrawCrop,eax,0,0,ecx,0,widthb,heightb
+	popa
+	invoke drd_imageDrawCrop, eax,edx,0,0,0,widthb,heightb
+	ret
+movebackTwo endp
 moveback proc backAdr:dword
-	mov eax,10
+	mov eax,1
 	cmp [ebx+getXdir],eax
 	je left
 	mov eax,-1280
@@ -68,14 +92,19 @@ getkeyback proc backAdr: dword
 	jne righti
 	ret
 	lefti:
-		mov eax,10
+		mov eax,1
 		mov [ebx+getXdir],eax
+		;jmp move
 		ret
-
 	righti:
-		mov eax,-10
+		mov eax,-1
 		mov [ebx+getXdir],eax
-		ret
+		
+	;move:
+	;mov ebx,backAdr
+	;mov eax,[ebx+getXdir]
+	;add [ebx],eax
+	ret
 getkeyback endp
 movegoomba proc objAdr: dword
 	mov ebx,objAdr
@@ -102,9 +131,9 @@ randx endp
 changepic proc, back:dword
 	mov ebx,back
 	mov eax,[ebx+getXdir]
-	cmp eax,10
+	cmp eax,1
 	je left
-	cmp eax,-10
+	cmp eax,-1
 	je right
 	mov ecx,isright
 	ret
@@ -241,7 +270,7 @@ getXgoombas proc gOne:dword,gTwo:dword,gThree:dword,gFour:dword,gFive:dword,gSix
 	mov [ebx],eax
 	ret
 getXgoombas endp
-replay proc playingloc:dword,marioAdr:dword,goomba1Adr:dword,goomba2Adr:dword,goomba3Adr:dword,goomba4Adr:dword,goomba5Adr:dword,goomba6Adr:dword,back1Adr:dword,back2Adr:dword,scoreAdr:dword
+replay proc playingloc:dword,marioAdr:dword,goomba1Adr:dword,goomba2Adr:dword,goomba3Adr:dword,goomba4Adr:dword,goomba5Adr:dword,goomba6Adr:dword,back1Adr:dword,scoreAdr:dword
 	invoke GetAsyncKeyState,VK_SPACE
 	cmp ax,0
 	je nothing
@@ -268,9 +297,9 @@ replay proc playingloc:dword,marioAdr:dword,goomba1Adr:dword,goomba2Adr:dword,go
 	mov eax,back1Adr
 	mov ebx,backOneBegin
 	mov [eax],ebx
-	mov eax,back2Adr
-	mov ebx,backTwoBegin
-	mov [eax],ebx
+	;mov eax,back2Adr
+	;mov ebx,backTwoBegin
+	;mov [eax],ebx
 	mov eax,scoreAdr
 	mov ebx,0
 	mov [eax],ebx
