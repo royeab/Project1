@@ -1,12 +1,6 @@
 .686
 .code
-moveobj PROC objAdr:DWORD, counterLoc:dword
-	mov eax,counterLoc
-	mov ebx,10
-	cmp [eax],ebx
-	jne notToday
-	mov ebx,0
-	mov [eax],ebx
+moveobj PROC objAdr:DWORD
 	mov ebx,objAdr ;ebx->offset mario
 	
 	mov ecx,marioGroundloc
@@ -24,10 +18,6 @@ moveobj PROC objAdr:DWORD, counterLoc:dword
 	cmp eax,0
 	jg jumpyes
 	ret
-	notToday:
-	mov ebx,1
-	add [eax],ebx
-	ret
 moveobj ENDP
 getkeysmar PROC objAdr:DWORD
 	mov ebx,objAdr
@@ -44,17 +34,38 @@ getkeysmar PROC objAdr:DWORD
 getkeysmar endp
 movebackTwo proc objAdr:dword
 	;drd_imageDrawCrop PROTO pimg:DWORD, dstX:DWORD, dstY:DWORD, srcX:DWORD, srcY:DWORD, srcWidth:DWORD, srcHeight:DWORD
-	mov objAdr,ebx
-	mov eax,[ebx+28]
+	mov ebx,objAdr
+	
+	mov eax,ebx
+	add eax,28
 	mov edx,[ebx+73]
+	
 	sub edx,[ebx+8]
+	mov [ebx+73],edx
 	mov ecx,[ebx+69]
 	add ecx,[ebx+8]
+	mov [ebx+69],ecx
+	cmp ecx,widthb
+	je reset
 	pusha
 	invoke drd_imageDrawCrop,eax,0,0,ecx,0,widthb,heightb
 	popa
 	invoke drd_imageDrawCrop, eax,edx,0,0,0,widthb,heightb
+	mov edx,0
+	mov [ebx+8],edx
+	
 	ret
+
+	reset:
+		mov ecx,0
+		mov [ebx+69],edx
+		mov edx,widthb
+		mov [ebx+73],edx
+		pusha
+		invoke drd_imageDrawCrop,eax,0,0,ecx,0,widthb,heightb
+		popa
+		invoke drd_imageDrawCrop, eax,edx,0,0,0,widthb,heightb
+		ret
 movebackTwo endp
 moveback proc backAdr:dword
 	mov eax,1
@@ -92,12 +103,12 @@ getkeyback proc backAdr: dword
 	jne righti
 	ret
 	lefti:
-		mov eax,1
+		mov eax,-10
 		mov [ebx+getXdir],eax
 		;jmp move
 		ret
 	righti:
-		mov eax,-1
+		mov eax,10
 		mov [ebx+getXdir],eax
 		
 	;move:
@@ -109,7 +120,7 @@ getkeyback endp
 movegoomba proc objAdr: dword
 	mov ebx,objAdr
 	mov ecx, [ebx+getXdir]
-	add [ebx],ecx
+	sub [ebx],ecx
 	mov eax,0
 	mov [ebx+getXdir],eax
 	ret
@@ -131,9 +142,9 @@ randx endp
 changepic proc, back:dword
 	mov ebx,back
 	mov eax,[ebx+getXdir]
-	cmp eax,1
+	cmp eax,-10
 	je left
-	cmp eax,-1
+	cmp eax,10
 	je right
 	mov ecx,isright
 	ret

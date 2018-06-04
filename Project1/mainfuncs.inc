@@ -42,14 +42,14 @@ include funcs.inc
 		jle no
 		
 		INVOKE getkeysmar, offset mario
-		INVOKE moveobj, offset mario,offset jumpCounter 
+		INVOKE moveobj, offset mario
 		INVOKE getkeyback, offset back1
 		;INVOKE getkeyback, offset back2
 		invoke changepic, offset back1
 		mov isright,ecx
 		;INVOKE moveback, offset back1
 		;INVOKE moveback, offset back2
-		invoke movebackTwo,offset back1
+
 		invoke handleGoombas, offset goomba1, offset mario, offset score,offset playing
 		invoke handleGoombas, offset goomba2, offset mario, offset score,offset playing
 		invoke handleGoombas, offset goomba3, offset mario, offset score,offset playing
@@ -58,6 +58,7 @@ include funcs.inc
 		invoke handleGoombas, offset goomba6, offset mario, offset score,offset playing
 		invoke dwtoa, score, offset textBuffer
 		invoke drd_setWindowTitle, offset textBuffer
+		invoke Sleep,10
 		ret
 		no:
 		invoke replay, offset playing,offset mario, offset goomba1,offset goomba2,offset goomba3,offset goomba4,offset goomba5,offset goomba6, offset back1,offset score
@@ -68,7 +69,7 @@ include funcs.inc
 		
 		;INVOKE drd_imageDraw, OFFSET back1.Right, back1.pos.x, back1.pos.y
 		;INVOKE drd_imageDraw, OFFSET back2.Right, back2.pos.x, back2.pos.y
-		
+		invoke movebackTwo,offset back1
 		cmp playing,1
 		je normal
 		cmp playing,-1
@@ -78,6 +79,7 @@ include funcs.inc
 		winner:
 		INVOKE drd_imageDraw, OFFSET win.Right, win.pos.x, win.pos.y
 		normal:
+		
 		invoke drawGoombas,offset goomba1,offset goomba2,offset goomba3,offset goomba4,offset goomba5,offset goomba6
 		
 		cmp isright,1
