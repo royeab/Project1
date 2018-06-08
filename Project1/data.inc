@@ -1,8 +1,6 @@
 .const
 	widthb equ 1280
 	heightb equ 720
-	keypress equ 1000h
-	goomnum equ 20
 	xending equ 30000
 	CharacterLen equ 108
 	GoombaY equ 375
@@ -20,17 +18,23 @@
 	backOneBegin equ -1280
 .DATA	
 	marioloc BYTE "mario.bmp",0
-	mario2loc BYTE "mario2.bmp",0
+	mariosheet1loc BYTE "mariosheet.bmp",0
+	mariosheet2loc byte "mariosheet2.bmp",0
 	backloc BYTE "background.bmp",0
 	goombaloc BYTE "goomba.bmp",0
 	gameoverloc BYTE "gameover.bmp",0
 	winloc BYTE "youwin.bmp",0
+	logoloc BYTE "logo.bmp",0
+	startloc BYTE "start.bmp",0
+	coinloc byte "coin.bmp",0
 	isright dword 1
 	grv dword 0
 	goombaamunt dword 0
 	score dword 0
 	playing dword 1
-	jumpCounter dword 10
+	animationCounter dword 0
+	curRight dword 0
+	curLeft dword 2200
 	KEYS STRUCT
 		Left dword ?
 		Right dword ?
@@ -41,15 +45,13 @@
 		dir POINT<> ;x=8 y=12
 		keys KEYS<> ;Left = 16 Right = 20 Up = 24			
 		Right Img<> ;28-48 width:32 height:36
-		Left Img<> ;48-68
-		alive BYTE 1
-		XOne dword ? ;69
-		xTwo dword ? ;73
-		UpRight Img<> ;68-88
-		UpLeft Img<> ;88-108
+		sheet1 Img<> ;48-68
+		alive dword 1
+		XOne dword 400 ;72
+		sheet2 Img<> ;76-96
 	CHARACTER ends
 	textBuffer byte 64 dup(0)
-	mario CHARACTER<<marioBegin,marioGroundloc>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	mario CHARACTER<<230,marioGroundloc>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	back1 CHARACTER<<backTwoBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	back2 CHARACTER<<backOneBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	goomba1 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
@@ -58,6 +60,13 @@
 	goomba4 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	goomba5 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	goomba6 CHARACTER<<0,GoombaY>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
+	coin1 CHARACTER<>
+	coin2 CHARACTER<>
+	coin3 CHARACTER<>
+	coin4 CHARACTER<>
+	coin5 CHARACTER<>
+	coin6 CHARACTER<>
 	gameover CHARACTER<<400,150>>
 	win CHARACTER<<400,150>>
-	
+	logo CHARACTER<<480,100>>
+	start CHARACTER<<450,400>>
