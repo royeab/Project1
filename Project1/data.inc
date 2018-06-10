@@ -27,6 +27,8 @@
 	logoloc BYTE "logo.bmp",0
 	startloc BYTE "start.bmp",0
 	coinloc byte "coin.bmp",0
+	musicloc byte "music.wav",0
+	gameoversoundloc byte "gameoversound.wav",0
 	isright dword 1
 	grv dword 0
 	goombaamunt dword 0
@@ -68,5 +70,5 @@
 	coin6 CHARACTER<>
 	gameover CHARACTER<<400,150>>
 	win CHARACTER<<400,150>>
-	logo CHARACTER<<480,100>>
+	logo CHARACTER<<460,70>>
 	start CHARACTER<<450,400>>

@@ -1,6 +1,8 @@
 .686
+include \masm32\include\winmm.inc
+includelib \masm32\lib\winmm.lib
 .code
-moveobj PROC objAdr:DWORD
+moveobj PROC objAdr:DWORD ;handle Mario's jump
 	mov ebx,objAdr ;ebx->offset mario
 	
 	mov ecx,marioGroundloc
@@ -19,7 +21,7 @@ moveobj PROC objAdr:DWORD
 	jg jumpyes
 	ret
 moveobj ENDP
-getkeysmar PROC objAdr:DWORD
+getkeysmar PROC objAdr:DWORD ;check if up is pressed and add to the y dir of Mario
 	mov ebx,objAdr
 	invoke GetAsyncKeyState, VK_UP ;up key
 	cmp ax,0
@@ -32,7 +34,7 @@ getkeysmar PROC objAdr:DWORD
 	notup:
 	ret
 getkeysmar endp
-movebackTwo proc objAdr:dword
+movebackTwo proc objAdr:dword ;handle endless back
 	mov ebx,objAdr
 	mov ecx,[ebx+72] ;current x
 	add ecx,[ebx+8] ;add to it dir
@@ -62,9 +64,7 @@ movebackTwo proc objAdr:dword
 	invoke drd_imageDrawCrop,eax,0,0,ecx,0,widthb,heightb ;draw first back
 	popa
 	invoke drd_imageDrawCrop, eax,edx,0,0,0,widthb,heightb ;draw second back
-	
 	ret
-
 	resetright:
 		mov ecx,0
 		mov [ebx+72],ecx ;move 0 to x
@@ -95,7 +95,7 @@ getkeyback proc backAdr: dword
 	
 	ret
 getkeyback endp
-movegoomba proc objAdr: dword
+movegoomba proc objAdr: dword ;move goomba in sync with background
 	mov ebx,objAdr
 	mov ecx, [ebx+getXdir]
 	sub [ebx],ecx
@@ -103,7 +103,7 @@ movegoomba proc objAdr: dword
 	mov [ebx+getXdir],eax
 	ret
 movegoomba endp
-randx proc min : dword, max: dword
+randx proc min : dword, max: dword ;gets random num between min and max.
 	push ecx
 	push edx
 	mov edx,0
@@ -117,7 +117,7 @@ randx proc min : dword, max: dword
 	pop edx
 	ret
 randx endp
-changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,countloc:dword,isrightAdr:dword
+changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,countloc:dword,isrightAdr:dword ;Changes the picture to display for animation and changes sides
 	;The animation
 	mov ebx,back
 	mov eax,[ebx+8]
@@ -245,7 +245,7 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	ret
 changepic endp
 
-squareCollision proc, objOneAdr:dword,objTwoAdr:dword
+squareCollision proc, objOneAdr:dword,objTwoAdr:dword ;Checks if square of objOne collides with square of objTwo
 	mov eax, objOneAdr
 	mov edx, objTwoAdr
 	mov edx,[edx]
@@ -301,7 +301,7 @@ squareCollision proc, objOneAdr:dword,objTwoAdr:dword
 	ret
 squareCollision endp
 
-jumpCollision proc objOne:dword,objTwo:dword
+jumpCollision proc objOne:dword,objTwo:dword ;In the case that squareCollision was true, check if mario is in the correct loc to stomp goomba
 	mov eax,objOne
 	mov ecx,[eax+getY]
 	mov edx,[eax+getImgHeight]
@@ -320,7 +320,7 @@ jumpCollision proc objOne:dword,objTwo:dword
 	ret
 jumpCollision endp
 
-handleCollision proc marAdr:dword,goomAdr:dword,scoreloc:dword,playingloc:dword
+handleCollision proc marAdr:dword,goomAdr:dword,scoreloc:dword,playingloc:dword ;overall handeling of mario and goomba col
 	invoke squareCollision,marAdr,goomAdr ;check general collision
 	cmp eax,0
 	je nothing
@@ -332,7 +332,7 @@ handleCollision proc marAdr:dword,goomAdr:dword,scoreloc:dword,playingloc:dword
 	mov ebx,0
 	mov [eax],ebx ;die
 	mov ebx,goomAdr
-
+	invoke PlaySound, OFFSET gameoversoundloc, NULL, SND_ASYNC
 	ret
 	scoreadd:
 	mov eax,scoreloc
@@ -344,7 +344,7 @@ handleCollision proc marAdr:dword,goomAdr:dword,scoreloc:dword,playingloc:dword
 	nothing:
 	ret
 handleCollision endp
-getXgoombas proc gOne:dword,gTwo:dword,gThree:dword,gFour:dword,gFive:dword,gSix:dword
+getXgoombas proc gOne:dword,gTwo:dword,gThree:dword,gFour:dword,gFive:dword,gSix:dword ;randomize all goomba x
 	;randomize x of all goombas
 	;1
 	mov ebx,gOne
@@ -412,7 +412,7 @@ getCoinLocs proc c1:dword,c2:dword,c3:dword,c4:dword,c5:dword,c6:dword
 	mov [ebx+4],eax
 	ret
 getCoinLocs endp
-replay proc playingloc:dword,marioAdr:dword,goomba1Adr:dword,goomba2Adr:dword,goomba3Adr:dword,goomba4Adr:dword,goomba5Adr:dword,goomba6Adr:dword,back1Adr:dword,scoreAdr:dword,coinAdr1:dword,coinAdr2:dword,coinAdr3:dword,coinAdr4:dword,coinAdr5:dword,coinAdr6:dword
+replay proc playingloc:dword,marioAdr:dword,goomba1Adr:dword,goomba2Adr:dword,goomba3Adr:dword,goomba4Adr:dword,goomba5Adr:dword,goomba6Adr:dword,back1Adr:dword,scoreAdr:dword,coinAdr1:dword,coinAdr2:dword,coinAdr3:dword,coinAdr4:dword,coinAdr5:dword,coinAdr6:dword,musicloc2:dword ;restart whole game
 	invoke GetAsyncKeyState,VK_SPACE
 	cmp ax,0
 	je nothing
@@ -464,11 +464,13 @@ replay proc playingloc:dword,marioAdr:dword,goomba1Adr:dword,goomba2Adr:dword,go
 	mov [ebx+68],eax
 	mov ebx,coinAdr6
 	mov [ebx+68],eax
+	mov eax,musicloc2
+	invoke PlaySound, eax, NULL, SND_ASYNC OR SND_LOOP
 	nothing:
 	ret
 replay endp
 
-checkWin proc pointsAdr:dword,playingAdr:dword
+checkWin proc pointsAdr:dword,playingAdr:dword ;checks if score is 12 and if it is it changes playing mode to win
 	mov eax,pointsAdr
 	mov ecx,12
 	cmp [eax],ecx ;check if won
@@ -481,7 +483,7 @@ checkWin proc pointsAdr:dword,playingAdr:dword
 	mov [eax],ecx ;move to win mode
 	ret
 checkWin endp
-handleGoombas proc goombaAdr:dword,marioAdr:dword,scoreAdr:dword,playingAdr:dword
+handleGoombas proc goombaAdr:dword,marioAdr:dword,scoreAdr:dword,playingAdr:dword ;moves goombas and checks collision
 		mov eax,goombaAdr
 		mov ebx,1
 		cmp [eax+68],ebx ;check if alive
@@ -497,7 +499,7 @@ handleGoombas proc goombaAdr:dword,marioAdr:dword,scoreAdr:dword,playingAdr:dwor
 		nothing:
 		ret
 handleGoombas endp
-drawGoombas proc goombaAdr1:dword,goombaAdr2:dword,goombaAdr3:dword,goombaAdr4:dword,goombaAdr5:dword,goombaAdr6:dword
+drawGoombas proc goombaAdr1:dword,goombaAdr2:dword,goombaAdr3:dword,goombaAdr4:dword,goombaAdr5:dword,goombaAdr6:dword ;draw all living goombas
 	;draw 1
 	mov eax,goombaAdr1
 	mov ebx,1
@@ -573,7 +575,7 @@ drawGoombas proc goombaAdr1:dword,goombaAdr2:dword,goombaAdr3:dword,goombaAdr4:d
 	stop:
 	ret
 drawGoombas endp
-handleCoins proc coinAdr:dword,marioAdr,scoreAdr
+handleCoins proc coinAdr:dword,marioAdr,scoreAdr ;moves living coins and checks collision
 	mov ebx,coinAdr
 	mov eax,1
 	mov ecx,[ebx+68]
@@ -602,7 +604,7 @@ handleCoins proc coinAdr:dword,marioAdr,scoreAdr
 	ret
 handleCoins endp
 
-drawCoins proc c1:dword,c2:dword,c3:dword,c4:dword,c5:dword,c6:dword
+drawCoins proc c1:dword,c2:dword,c3:dword,c4:dword,c5:dword,c6:dword ;draws all living coins
 	mov ebx,c1
 	mov edx,[ebx+68]
 	mov ecx,1
