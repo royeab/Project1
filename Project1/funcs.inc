@@ -8,12 +8,15 @@ moveobj PROC objAdr:DWORD ;handle Mario's jump
 	mov ecx,marioGroundloc
 	cmp [ebx+getY],ecx
 	jae on_ground
+
 	jumpyes:
 	mov eax,[ebx+getYdir];eax=diry
 	sub [ebx+getY],eax;add diry to marioy
 	dec eax
+
 	mov [ebx+getYdir],eax
 	ret
+
 	on_ground:
 	mov [ebx+getY],ecx
 	mov eax,[ebx+getYdir];eax=diry
@@ -23,19 +26,24 @@ moveobj PROC objAdr:DWORD ;handle Mario's jump
 moveobj ENDP
 getkeysmar PROC objAdr:DWORD ;check if up is pressed and add to the y dir of Mario
 	mov ebx,objAdr
+
 	invoke GetAsyncKeyState, VK_UP ;up key
 	cmp ax,0
 	je notup
+
 	mov eax,marioGroundloc
 	cmp [ebx+getY],eax ;compare Y and and ground loc
 	jne notup 
+
 	mov ecx,20 ;add direction
 	mov [ebx+getYdir],ecx
+
 	notup:
 	ret
 getkeysmar endp
 movebackTwo proc objAdr:dword ;handle endless back
 	mov ebx,objAdr
+
 	mov ecx,[ebx+72] ;current x
 	add ecx,[ebx+8] ;add to it dir
 	mov [ebx+72],ecx ;update original x
@@ -43,17 +51,20 @@ movebackTwo proc objAdr:dword ;handle endless back
 	mov ecx,10
 	cmp eax,ecx ;check dir
 	jne left 
+
 	;right
 	mov ecx,[ebx+72]
 	mov edx,1280
 	cmp ecx,edx ;check if reset
 	je resetright
 	jmp drawback
+
 	left:
 	mov ecx,[ebx+72]
 	mov edx,0
 	cmp ecx,edx
 	je resetleft ;check if reset
+
 	drawback:
 	mov eax,ebx
 	add eax,28 ;eax=image loc
@@ -61,14 +72,18 @@ movebackTwo proc objAdr:dword ;handle endless back
 	mov edx,1280
 	sub edx,ecx
 	pusha
+
 	invoke drd_imageDrawCrop,eax,0,0,ecx,0,widthb,heightb ;draw first back
 	popa
+
 	invoke drd_imageDrawCrop, eax,edx,0,0,0,widthb,heightb ;draw second back
 	ret
+
 	resetright:
 		mov ecx,0
 		mov [ebx+72],ecx ;move 0 to x
 		jmp drawback
+
 	resetleft:
 		mov ecx,1270
 		mov [ebx+72],ecx ;move 1270 to x
@@ -79,20 +94,21 @@ getkeyback proc backAdr: dword
 	invoke GetAsyncKeyState, VK_LEFT
 	cmp ax,0
 	jne lefti
+
 	invoke GetAsyncKeyState, VK_RIGHT
 	cmp ax,0
 	jne righti
 	ret
+
 	lefti:
 		mov eax,-10
 		mov [ebx+getXdir],eax
 		;jmp move
 		ret
+
 	righti:
 		mov eax,10
 		mov [ebx+getXdir],eax
-		
-	
 	ret
 getkeyback endp
 movegoomba proc objAdr: dword ;move goomba in sync with background
@@ -100,19 +116,24 @@ movegoomba proc objAdr: dword ;move goomba in sync with background
 	mov ecx, [ebx+getXdir]
 	sub [ebx],ecx
 	mov eax,0
+
 	mov [ebx+getXdir],eax
 	ret
 movegoomba endp
 randx proc min : dword, max: dword ;gets random num between min and max.
 	push ecx
 	push edx
+
 	mov edx,0
 	mov ecx,max
 	sub ecx,min ;difference between min and max
+
 	rdrand eax ;randomise eax between 0 and 2^32
 	idiv ecx 
+
 	add edx,min ;add min to mod eax
 	mov eax,edx
+
 	pop ecx
 	pop edx
 	ret
@@ -124,9 +145,11 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	mov ecx,10
 	cmp eax,ecx
 	je right
+
 	mov ecx,0
 	cmp eax,ecx
 	je nothing
+
 	;left:
 	mov ecx,isrightAdr
 	mov edx,0
@@ -136,12 +159,14 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	mov ecx,marioGroundloc
 	cmp edx,ecx ;check if jumping
 	jne jumpleft
+
 	;leftnotjump
 	mov edx,countloc
 	mov ecx,10
 	mov eax,curlocLeft
 	cmp [edx],ecx ;check counter
 	jne nochangeleft
+
 	mov ecx,0
 	mov [edx],ecx
 	mov eax,curlocLeft
@@ -152,10 +177,13 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	mov ecx,440
 	sub [eax],ecx
 	je resetleft
+
 	jmp after
+
 	nochangeleft:
 	mov ecx,1	;add to counter
 	add [edx],ecx
+
 	after:
 	mov ebx,marioAdr
 	add ebx,76
@@ -164,6 +192,7 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	mov edx,0
 	mov [ebx+8],edx
 	ret
+
 	resetleft:
 	mov ecx,2200
 	mov [eax],ecx	;move location of first frame to frame
@@ -178,6 +207,7 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	mov edx,0
 	mov [ebx+8],edx
 	ret
+
 	right:
 	mov ecx,isrightAdr
 	mov edx,1
@@ -187,6 +217,7 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	mov ecx,marioGroundloc
 	cmp edx,ecx ;check if jumping
 	jne jumpright
+
 	;rightnotjump
 	mov edx,countloc
 	mov ecx,10
@@ -200,10 +231,13 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	mov edx,2200
 	cmp [eax],edx ;check if reset in needed
 	je resetright
+
 	jmp afterright
+
 	nochange:
 	mov ecx,1 ;add to counter
 	add [edx],ecx
+
 	afterright:
 	mov ebx,marioAdr
 	add ebx,48
@@ -213,6 +247,7 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	mov edx,0
 	mov [ebx+8],edx
 	ret
+
 	jumpright:
 	mov ebx,marioAdr
 	mov edx,[ebx+4]
@@ -222,21 +257,25 @@ changepic proc, back:dword,marioAdr:dword,curlocRight:dword,curlocLeft:dword,cou
 	mov edx,0
 	mov [ebx+8],edx
 	ret
+
 	resetright:
 	mov edx,0
 	mov [eax],edx ;move to first frame
 	jmp afterright
+
 	nothing:
 	mov ebx,isrightAdr
 	mov eax,1
 	cmp [ebx],eax ;find last direction
 	je rightnothing
+
 	;leftnothing:
 	mov ebx,marioAdr
 	mov ecx,[ebx+4]
 	add ebx,76
 	invoke drd_imageDrawCrop,ebx,marioBegin,ecx,2200,0,300,400 ;draw idle left
 	ret
+
 	rightnothing:
 	mov ebx,marioAdr
 	mov ecx,[ebx+4]
@@ -251,6 +290,7 @@ squareCollision proc, objOneAdr:dword,objTwoAdr:dword ;Checks if square of objOn
 	mov edx,[edx]
 	cmp [eax],edx ;check which x is bigger
 	jg OneBigger
+
 	;TwoBigger:
 	mov eax,[eax]
 	sub eax,edx
@@ -268,6 +308,7 @@ squareCollision proc, objOneAdr:dword,objTwoAdr:dword ;Checks if square of objOn
 	FinalX:
 	cmp eax,[edx+getImgWidth] ;Compare difference between x's and smaller width
 	jge nocol
+
 	;colX
 	mov eax,objOneAdr
 	mov eax,[eax+getY]
@@ -280,6 +321,7 @@ squareCollision proc, objOneAdr:dword,objTwoAdr:dword ;Checks if square of objOn
 	neg eax ;get the difference between bigger and larger
 	mov edx,objOneAdr
 	jmp FinalY
+
 	OneYBigger:
 	mov edx,[edx+getY]
 	sub edx,eax
@@ -311,10 +353,12 @@ jumpCollision proc objOne:dword,objTwo:dword ;In the case that squareCollision w
 	add ebx,10
 	cmp ecx,ebx
 	jge nothing
+
 	mov ebx,13
 	mov [eax+getYdir],ebx	;give mario the jump boost
 	mov ecx,1
 	ret
+
 	nothing:
 	mov ecx,0
 	ret
@@ -324,16 +368,20 @@ handleCollision proc marAdr:dword,goomAdr:dword,scoreloc:dword,playingloc:dword 
 	invoke squareCollision,marAdr,goomAdr ;check general collision
 	cmp eax,0
 	je nothing
+
 	invoke jumpCollision,marAdr,goomAdr ;check jump collision
 	cmp ecx,1
 	je scoreadd ;add score if jump collision
 	;there is collision but no jump collision
+
 	mov eax,playingloc
 	mov ebx,0
 	mov [eax],ebx ;die
 	mov ebx,goomAdr
+
 	invoke PlaySound, OFFSET gameoversoundloc, NULL, SND_ASYNC
 	ret
+
 	scoreadd:
 	mov eax,scoreloc
 	mov ebx,1
@@ -341,6 +389,7 @@ handleCollision proc marAdr:dword,goomAdr:dword,scoreloc:dword,playingloc:dword 
 	mov eax,goomAdr
 	mov ebx,0
 	mov [eax+68],ebx
+
 	nothing:
 	ret
 handleCollision endp
@@ -350,60 +399,72 @@ getXgoombas proc gOne:dword,gTwo:dword,gThree:dword,gFour:dword,gFive:dword,gSix
 	mov ebx,gOne
 	invoke randx,500,30000
 	mov [ebx],eax
+
 	;2
 	mov ebx,gTwo
 	invoke randx,500,30000
 	mov [ebx],eax
+
 	;3
 	mov ebx,gThree
 	invoke randx,500,30000
 	mov [ebx],eax
+
 	;4
 	mov ebx,gFour
 	invoke randx,500,30000
 	mov [ebx],eax
+
 	;5
 	mov ebx,gFive
 	invoke randx,500,30000
 	mov [ebx],eax
+
 	;6
 	mov ebx,gSix
 	invoke randx,500,30000
 	mov [ebx],eax
+
 	ret
 getXgoombas endp
 getCoinLocs proc c1:dword,c2:dword,c3:dword,c4:dword,c5:dword,c6:dword
 	;randomize locs of all coins
+
 	;1
 	mov ebx,c1
 	invoke randx,500,30000
 	mov [ebx],eax
 	invoke randx,30,350
 	mov [ebx+4],eax
+
 	;2
 	mov ebx,c2
 	invoke randx,500,30000
 	mov [ebx],eax
 	invoke randx,30,350
 	mov [ebx+4],eax
+
 	;3
 	mov ebx,c3
 	invoke randx,500,30000
 	mov [ebx],eax
 	invoke randx,30,350
 	mov [ebx+4],eax
+
 	;4
 	mov ebx,c4
 	invoke randx,500,30000
 	mov [ebx],eax
 	invoke randx,30,350
 	mov [ebx+4],eax
+
 	;5
 	mov ebx,c5
 	invoke randx,500,30000
 	mov [ebx],eax
 	invoke randx,30,350
 	mov [ebx+4],eax
+
 	;6
 	mov ebx,c6
 	invoke randx,500,30000
@@ -416,6 +477,7 @@ replay proc playingloc:dword,marioAdr:dword,goomba1Adr:dword,goomba2Adr:dword,go
 	invoke GetAsyncKeyState,VK_SPACE
 	cmp ax,0
 	je nothing
+
 	mov eax,playingloc
 	mov ebx,1
 	mov [eax],ebx
@@ -426,23 +488,30 @@ replay proc playingloc:dword,marioAdr:dword,goomba1Adr:dword,goomba2Adr:dword,go
 	mov eax,goomba1Adr
 	mov ebx,1
 	;bring back goombas
+
 	;1
 	mov [eax+68],ebx
+
 	;2
 	mov eax,goomba2Adr
 	mov [eax+68],ebx
+	
 	;3
 	mov eax,goomba3Adr
 	mov [eax+68],ebx
+	
 	;4
 	mov eax,goomba4Adr
 	mov [eax+68],ebx
+	
 	;5
 	mov eax,goomba5Adr
 	mov [eax+68],ebx
+	
 	;6
 	mov eax,goomba6Adr
 	mov [eax+68],ebx
+
 	;reset back
 	mov eax,back1Adr
 	mov ebx,400
@@ -452,18 +521,25 @@ replay proc playingloc:dword,marioAdr:dword,goomba1Adr:dword,goomba2Adr:dword,go
 	mov [eax],ebx
 	invoke getCoinLocs,coinAdr1,coinAdr2,coinAdr3,coinAdr4,coinAdr5,coinAdr6 ;coin locs
 	mov eax,1
+
 	mov ebx,coinAdr1
 	mov [ebx+68],eax
+
 	mov ebx,coinAdr2
 	mov [ebx+68],eax
+
 	mov ebx,coinAdr3
 	mov [ebx+68],eax
+
 	mov ebx,coinAdr4
 	mov [ebx+68],eax
+
 	mov ebx,coinAdr5
 	mov [ebx+68],eax
+
 	mov ebx,coinAdr6
 	mov [ebx+68],eax
+
 	mov eax,musicloc2
 	invoke PlaySound, eax, NULL, SND_ASYNC OR SND_LOOP
 	nothing:
@@ -476,6 +552,7 @@ checkWin proc pointsAdr:dword,playingAdr:dword ;checks if score is 12 and if it 
 	cmp [eax],ecx ;check if won
 	je winner
 	ret
+
 	winner:
 	mov ecx,1
 	neg ecx
@@ -488,9 +565,11 @@ handleGoombas proc goombaAdr:dword,marioAdr:dword,scoreAdr:dword,playingAdr:dwor
 		mov ebx,1
 		cmp [eax+68],ebx ;check if alive
 		jne nothing
+
 		invoke getkeyback, eax
 		mov eax,goombaAdr
 		invoke movegoomba,eax ;move the goomba
+
 		mov eax, goombaAdr
 		mov ebx,marioAdr
 		mov ecx,scoreAdr
@@ -511,6 +590,7 @@ drawGoombas proc goombaAdr1:dword,goombaAdr2:dword,goombaAdr3:dword,goombaAdr4:d
 	add edx,4
 	mov ebx,[edx]
 	INVOKE drd_imageDraw, ecx, [eax], [edx]
+
 	;draw 2
 	doTwo:
 	mov eax,goombaAdr2
@@ -523,6 +603,7 @@ drawGoombas proc goombaAdr1:dword,goombaAdr2:dword,goombaAdr3:dword,goombaAdr4:d
 	add edx,4
 
 	INVOKE drd_imageDraw, ecx, [eax], [edx]
+
 	;draw 3
 	doThree:
 	mov eax,goombaAdr3
@@ -535,6 +616,7 @@ drawGoombas proc goombaAdr1:dword,goombaAdr2:dword,goombaAdr3:dword,goombaAdr4:d
 	add edx,4
 
 	INVOKE drd_imageDraw, ecx, [eax], [edx]
+
 	;draw 4
 	doFour:
 	mov eax,goombaAdr4
@@ -547,6 +629,7 @@ drawGoombas proc goombaAdr1:dword,goombaAdr2:dword,goombaAdr3:dword,goombaAdr4:d
 	add edx,4
 
 	INVOKE drd_imageDraw, ecx, [eax], [edx]
+
 	;draw 5
 	doFive:
 	mov eax,goombaAdr5
@@ -559,6 +642,7 @@ drawGoombas proc goombaAdr1:dword,goombaAdr2:dword,goombaAdr3:dword,goombaAdr4:d
 	add edx,4
 
 	INVOKE drd_imageDraw, ecx, [eax], [edx]
+
 	;draw 6
 	doSix:
 	mov eax,goombaAdr6
@@ -583,13 +667,16 @@ handleCoins proc coinAdr:dword,marioAdr,scoreAdr ;moves living coins and checks 
 	jne nothing
 	push ebx
 	invoke getkeyback,ebx
+
 	pop ebx
 	push ebx
 	invoke movegoomba,ebx
+
 	pop ebx
 	mov ecx,marioAdr
 	push ebx
 	invoke squareCollision,ebx,ecx ;check if coin collides
+
 	pop ebx
 	mov edx,1
 	cmp eax,edx
@@ -615,6 +702,7 @@ drawCoins proc c1:dword,c2:dword,c3:dword,c4:dword,c5:dword,c6:dword ;draws all 
 	mov ecx,[ebx]
 	mov edx,[ebx+4]
 	invoke drd_imageDraw,eax,ecx,edx
+
 	co2:
 	mov ebx,c2
 	mov edx,[ebx+68]
@@ -626,6 +714,7 @@ drawCoins proc c1:dword,c2:dword,c3:dword,c4:dword,c5:dword,c6:dword ;draws all 
 	mov ecx,[ebx]
 	mov edx,[ebx+4]
 	invoke drd_imageDraw,eax,ecx,edx
+
 	co3:
 	mov ebx,c3
 	mov edx,[ebx+68]
@@ -637,6 +726,7 @@ drawCoins proc c1:dword,c2:dword,c3:dword,c4:dword,c5:dword,c6:dword ;draws all 
 	mov ecx,[ebx]
 	mov edx,[ebx+4]
 	invoke drd_imageDraw,eax,ecx,edx
+
 	co4:
 	mov ebx,c4
 	mov edx,[ebx+68]
@@ -648,6 +738,7 @@ drawCoins proc c1:dword,c2:dword,c3:dword,c4:dword,c5:dword,c6:dword ;draws all 
 	mov ecx,[ebx]
 	mov edx,[ebx+4]
 	invoke drd_imageDraw,eax,ecx,edx
+
 	co5:
 	mov ebx,c5
 	mov edx,[ebx+68]
@@ -659,6 +750,7 @@ drawCoins proc c1:dword,c2:dword,c3:dword,c4:dword,c5:dword,c6:dword ;draws all 
 	mov ecx,[ebx]
 	mov edx,[ebx+4]
 	invoke drd_imageDraw,eax,ecx,edx
+
 	co6:
 	mov ebx,c6
 	mov edx,[ebx+68]

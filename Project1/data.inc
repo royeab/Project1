@@ -17,6 +17,7 @@
 	backTwoBegin equ 0
 	backOneBegin equ -1280
 .DATA	
+
 	marioloc BYTE "mario.bmp",0
 	mariosheet1loc BYTE "mariosheet.bmp",0
 	mariosheet2loc byte "mariosheet2.bmp",0
@@ -27,20 +28,32 @@
 	logoloc BYTE "logo.bmp",0
 	startloc BYTE "start.bmp",0
 	coinloc byte "coin.bmp",0
+
 	musicloc byte "music.wav",0
 	gameoversoundloc byte "gameoversound.wav",0
+
 	isright dword 1
+
 	grv dword 0
+
 	goombaamunt dword 0
+
 	score dword 0
+
 	playing dword 1
+
 	animationCounter dword 0
+
 	curRight dword 0
+
 	curLeft dword 2200
+
 	KEYS STRUCT
+
 		Left dword ?
 		Right dword ?
 		Up dword ?
+
 	KEYS ends
 	CHARACTER STRUCT
 		pos POINT<> ;x=0 y=4
@@ -52,7 +65,9 @@
 		XOne dword 400 ;72
 		sheet2 Img<> ;76-96
 	CHARACTER ends
+
 	textBuffer byte 64 dup(0)
+
 	mario CHARACTER<<230,marioGroundloc>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	back1 CHARACTER<<backTwoBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
 	back2 CHARACTER<<backOneBegin,0>,<0,0>,<VK_LEFT,VK_RIGHT,VK_UP>>
